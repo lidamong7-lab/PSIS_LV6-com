@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSIS Midterm Practice Hub | by Lida MONG</title>
+    <!-- Google Fonts & Canvas Confetti -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #FF7B9C;
+            --primary-hover: #FF527B;
+            --secondary: #6C5CE7;
+            --accent: #FFD166;
+            --mint: #06D6A0;
+            --sky: #4EA8DE;
+            --bg-gradient: linear-gradient(135deg, #FFF0F5 0%, #E6E6FA 50%, #E0F7FA 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #2D3436;
+            --text-muted: #636E72;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --shadow: 0 12px 32px rgba(108, 92, 231, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            min-height: 680px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-lg);
+            border: 3px solid #FFFFFF;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Screen Management */
+        .screen {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 32px;
+            animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Typography */
+        h1, h2, h3, .brand-title {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .text-center { text-align: center; }
+
+        /* Floating Cute Decorations */
+        .decoration {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            animation: float 4s ease-in-out infinite alternate;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        /* SCREEN 1: WELCOME & ONBOARDING */
+        #welcome-screen {
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(circle at top right, #FFF5F7, transparent);
+        }
+
+        .logo-badge {
+            background: linear-gradient(135deg, #FF7B9C, #6C5CE7);
+            color: white;
+            font-size: 3.5rem;
+            font-weight: 700;
+            padding: 12px 36px;
+            border-radius: 50px;
+            box-shadow: 0 8px 24px rgba(255, 123, 156, 0.35);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .author-tag {
+            font-size: 1.25rem;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: #E6E6FA;
+            padding: 6px 18px;
+            border-radius: 20px;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 28px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            width: 100%;
+            max-width: 420px;
+            border: 2px solid #F0E6FF;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 123, 156, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.25rem;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 6px 18px rgba(255, 123, 156, 0.3);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 22px rgba(255, 123, 156, 0.4);
+        }
+
+        /* HUB & ROADMAP */
+        .hub-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+        }
+
+        .student-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stage-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            border: 3px solid #F0F0F0;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stage-card.unlocked {
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(255, 123, 156, 0.15);
+        }
+
+        .stage-card.completed {
+            border-color: var(--mint);
+            background: #F0FFF4;
+        }
+
+        .stage-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .stage-score-badge {
+            background: var(--secondary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        /* QUIZ ENGINE */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #E2E8F0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Reading Passage Box */
+        .reading-box {
+            background: #F8F9FA;
+            border-left: 5px solid var(--secondary);
+            padding: 18px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-height: 220px;
+            overflow-y: auto;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #333;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .reading-box h4 {
+            font-family: 'Fredoka', sans-serif;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .question-card {
+            background: white;
+            padding: 28px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+            border: 2px solid #F0E6FF;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .audio-box {
+            background: #F4F0FF;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #F8F9FA;
+            border: 2px solid #E9ECEF;
+            padding: 14px 20px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-btn:hover {
+            border-color: var(--sky);
+            background: #EBF8FF;
+        }
+
+        .option-btn.correct {
+            background: #D4EDDA !important;
+            border-color: var(--mint) !important;
+            color: #155724 !important;
+        }
+
+        .option-btn.incorrect {
+            background: #F8D7DA !important;
+            border-color: #FF527B !important;
+            color: #721C24 !important;
+        }
+
+        /* RESULTS SCREEN */
+        .results-card {
+            text-align: center;
+            padding: 36px 24px;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 3px solid #F0E6FF;
+        }
+
+        .animated-emoji {
+            font-size: 6rem;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+
+        .anim-bounce { animation: bounce 1s infinite; }
+        .anim-pulse { animation: pulse 0.8s infinite; }
+        .anim-wiggle { animation: wiggle 0.6s infinite; }
+
+        .praise-title {
+            font-size: 2.2rem;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'Fredoka', sans-serif;
+            margin: 16px 0;
+        }
+
+        @media (max-width: 768px) {
+            .roadmap-grid { grid-template-columns: 1fr; }
+            .app-container { min-height: 100vh; border-radius: 0; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Background Emojis -->
+    <div class="decoration" style="top: 10%; left: 5%;">📚</div>
+    <div class="decoration" style="top: 15%; right: 8%; animation-delay: 1s;">✨</div>
+    <div class="decoration" style="bottom: 10%; left: 8%; animation-delay: 2s;">🚗</div>
+    <div class="decoration" style="bottom: 12%; right: 6%; animation-delay: 1.5s;">🥑</div>
+
+    <div class="app-container">
+
+        <!-- SCREEN 1: WELCOME & ONBOARDING -->
+        <div id="welcome-screen" class="screen active">
+            <div class="logo-badge">PSIS</div>
+            <div class="author-tag">by Lida MONG</div>
+            
+            <div class="welcome-card text-center">
+                <h2 style="font-size: 1.6rem; color: var(--text-dark); margin-bottom: 8px;">Midterm Practice Hub</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">Connectivity 2B (Units 6 – 8.2)</p>
+                
+                <div class="form-group">
+                    <label>Student's Full Name</label>
+                    <input type="text" id="student-name" class="form-input" placeholder="e.g. Borith Chan" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Class / Student ID</label>
+                    <input type="text" id="student-id" class="form-input" placeholder="e.g. C2B-04" required>
+                </div>
+
+                <button class="btn-primary" onclick="launchHub()">Let's Go! 🚀</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: ROADMAP HUB -->
+        <div id="hub-screen" class="screen">
+            <div class="hub-header">
+                <div class="student-pill">
+                    <div class="avatar">🎓</div>
+                    <div>
+                        <h3 id="display-student-name" style="font-size: 1.1rem; color: var(--text-dark);">Student</h3>
+                        <p id="display-student-id" style="font-size: 0.85rem; color: var(--text-muted);">ID: ---</p>
+                    </div>
+                </div>
+                <div>
+                    <span style="font-weight: 700; color: var(--text-muted);">Total Progress:</span>
+                    <span id="total-score-badge" style="font-family: 'Fredoka'; font-size: 1.4rem; color: var(--primary); margin-left: 6px;">0 / 100</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h2>Midterm Practice Roadmap</h2>
+                <p style="color: var(--text-muted);">Complete all 3 sections to finish your practice exam!</p>
+            </div>
+
+            <div class="roadmap-grid">
+                <!-- Stage 1 -->
+                <div id="stage-card-1" class="stage-card unlocked">
+                    <div class="stage-icon">🥑</div>
+                    <h3>Section I & II</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 6px 0;">Vocabulary & Definitions</p>
+                    <span id="stage-1-score" class="stage-score-badge">40 Questions</span>
+                    <button class="btn-primary" style="margin-top: 16px; font-size: 1rem; padding: 10px;" onclick="startStage(1)">Start Stage 1</button>
+                </div>
+
+                <!-- Stage 2 -->
+                <div id="stage-card-2" class="stage-card">
+                    <div class="stage-icon">🚘</div>
+                    <h3>Section III</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 6px 0;">Grammar & Conditionals</p>
+                    <span id="stage-2-score" class="stage-score-badge">30 Questions</span>
+                    <button id="stage-2-btn" class="btn-primary" style="margin-top: 16px; font-size: 1rem; padding: 10px; opacity: 0.5;" disabled onclick="startStage(2)">Locked 🔒</button>
+                </div>
+
+                <!-- Stage 3 -->
+                <div id="stage-card-3" class="stage-card">
+                    <div class="stage-icon">📖</div>
+                    <h3>Section IV & V</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 6px 0;">Listening & Reading</p>
+                    <span id="stage-3-score" class="stage-score-badge">30 Questions</span>
+                    <button id="stage-3-btn" class="btn-primary" style="margin-top: 16px; font-size: 1rem; padding: 10px; opacity: 0.5;" disabled onclick="startStage(3)">Locked 🔒</button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: auto;">
+                <button id="final-results-btn" class="btn-primary" style="display: none; background: linear-gradient(135deg, var(--mint), #00B894);" onclick="showFinalResults()">View Final Certificate 🏆</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: QUIZ ENGINE -->
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-header">
+                <div>
+                    <span id="stage-indicator" style="font-family:'Fredoka'; font-size: 1.1rem; color: var(--secondary);">Stage 1</span>
+                    <span id="question-number" style="margin-left: 8px; font-weight: 700; color: var(--text-muted);">Q1 / 40</span>
+                </div>
+                <button style="background: none; border: none; font-weight: 700; color: var(--primary); cursor: pointer;" onclick="returnToHub()">Exit to Hub ✖</button>
+            </div>
+
+            <div class="progress-bar-container">
+                <div id="quiz-progress" class="progress-bar"></div>
+            </div>
+
+            <!-- Reading Section Reference Passage -->
+            <div id="reading-passage-container" class="reading-box" style="display: none;">
+                <h4>📖 Midterm Reading Passage: Healthy Living & Mindful Driving</h4>
+                <p>
+                    Making wise choices in daily life is essential for maintaining personal health and ensuring public safety. 
+                    When it comes to nutrition, understanding food categories helps us eat better. <strong>Whole grains</strong>, such as brown rice and oats, retain essential nutrients and fiber compared to <strong>refined grains</strong>. Additionally, vegetables like potatoes and cassava are classified as <strong>starchy vegetables</strong>, which provide energy but should be eaten in balance with green vegetables and <strong>poultry</strong> like chicken or turkey. Many individuals adopt specific diets to lose weight or avoid diseases like <strong>obesity</strong>. However, when offered food that doesn't fit a diet or causes discomfort, politely declining with phrases like <em>"It doesn't agree with me"</em> helps manage social situations smoothly.
+                </p>
+                <p style="margin-top: 10px;">
+                    Similarly, safety choices on the road are vital. Unsafe habits like <strong>tailgating</strong> (driving too close behind another vehicle) and <strong>weaving through traffic</strong> significantly increase the risk of collisions. A minor accident, often called a <strong>fender bender</strong>, can easily escalate into a severe <strong>pileup</strong> or head-on crash if drivers are distracted by texting or speeding. Responsible drivers always <strong>observe the speed limit</strong> and use turn signals. If everyone practiced mindful eating and cautious driving, overall well-being and road safety would improve dramatically.
+                </p>
+            </div>
+
+            <div class="question-card">
+                <div id="audio-container" class="audio-box" style="display: none;">
+                    <span style="font-size: 1.5rem;">🎧</span>
+                    <span style="font-weight: 700; color: var(--secondary);">Listening Clip Simulator</span>
+                    <button id="play-audio-btn" style="margin-left: auto; background: var(--secondary); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; cursor: pointer;">Play Voice 🔊</button>
+                </div>
+
+                <div id="question-text" class="question-title">Loading Question...</div>
+                <div id="options-container" class="options-grid"></div>
+            </div>
+
+            <button id="next-q-btn" class="btn-primary" style="display: none;" onclick="nextQuestion()">Next Question ➔</button>
+        </div>
+
+        <!-- SCREEN 4: CREATIVE DYNAMIC RESULTS -->
+        <div id="results-screen" class="screen">
+            <div class="results-card">
+                <div id="result-emoji" class="animated-emoji">🌟</div>
+                <h2 id="result-title" class="praise-title">Outstanding Job!</h2>
+                <p id="result-subtitle" style="color: var(--text-muted); font-size: 1.1rem;">You completed the PSIS Connectivity 2B Practice Exam!</p>
+
+                <div class="score-display">
+                    <span id="final-score-val">0</span> <span style="font-size: 1.8rem; color: var(--text-muted);">/ 100</span>
+                </div>
+
+                <div style="background: #F8F9FA; padding: 18px; border-radius: 12px; margin: 20px 0; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Student Name:</span> <strong id="cert-name">---</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Class / ID:</span> <strong id="cert-id">---</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Status:</span> <strong id="cert-status" style="color: var(--mint);">PASSED 🎉</strong>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="restartQuiz()">Try Again 🔄</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // QUESTION BANK (100 EXERCISES WITH CORRECTED DIVERSE ANSWERS ACROSS A, B, C, D)
+        const quizData = {
+            stage1: [
+                { q: "1. She's so angry; she wanted ______ hair, but it turned out green.", options: ["starchy", "blonde", "obesity", "gorgeous"], ans: 1 },
+                { q: "2. Potatoes, corn, and cassava are categorized as ______ vegetables.", options: ["green", "starchy", "refined", "poultry"], ans: 1 },
+                { q: "3. Consuming too many refined grains and sugars can increase the risk of ______.", options: ["convertible", "tailgate", "obesity", "fender bender"], ans: 2 },
+                { q: "4. He politely ______ the dessert because he is trying to lose weight.", options: ["declined", "sideswiped", "tailgated", "honked"], ans: 0 },
+                { q: "5. Driving ______ fast in a school zone is both illegal and dangerous.", options: ["gorgeous", "plain", "excessively", "starchy"], ans: 2 },
+                { q: "6. Look at that ______ red sports car parked in front of the building!", options: ["obesity", "sideswiped", "fender bender", "gorgeous"], ans: 3 },
+                { q: "7. Chicken, duck, and turkey belong to the food category known as ______.", options: ["whole grains", "poultry", "green vegetables", "dairy"], ans: 1 },
+                { q: "8. Another car ______ my SUV while I was stopped at the traffic light.", options: ["declined", "gossiped", "rear-ended", "picked out"], ans: 2 },
+                { q: "9. Stop ______ the truck ahead of us; leave a safe stopping distance!", options: ["filling out", "tailgating", "declining", "gossiping"], ans: 1 },
+                { q: "10. A ______ is much easier to park on tight Phnom Penh streets than an SUV.", options: ["pileup", "poultry", "fender bender", "compact car"], ans: 3 },
+                
+                // Matching Definitions
+                { q: "11. 'fender bender': What is the definition?", options: ["A total head-on collision", "A food allergy symptom", "A minor traffic accident with little damage", "Driving fast in a no-passing zone"], ans: 2 },
+                { q: "12. 'cut down on': What does this phrase mean?", options: ["To cut food into small pieces", "To reduce the amount or frequency of something", "To stop a vehicle abruptly", "To buy groceries"], ans: 1 },
+                { q: "13. 'tailgate': What does this driving habit mean?", options: ["To signal when turning", "To observe the speed limit", "To park on the sidewalk", "To drive too closely behind another car"], ans: 3 },
+                { q: "14. 'convertible': What type of vehicle is this?", options: ["A car with a roof that can be folded down", "A large commercial truck", "An electric bus", "A car with two steering wheels"], ans: 0 },
+                { q: "15. 'stopped cold': What does this mean in context?", options: ["To feel very cold during winter", "To turn on the car air conditioner", "To completely stop doing something suddenly", "To freeze food"], ans: 2 },
+                { q: "16. 'it doesn't agree with me': What does this food expression mean?", options: ["I don't know how to cook it", "The food causes stomach indigestion or discomfort", "The food is too expensive", "I love eating it every day"], ans: 1 },
+                { q: "17. 'gossip about': What does this activity mean?", options: ["To study for an English exam", "To repair a car engine", "To talk or rumor about personal lives of others", "To order food online"], ans: 2 },
+                { q: "18. 'sideswiped': What type of impact is this?", options: ["Hit the side of a vehicle while driving past", "Hit from behind at a red light", "Hit directly head-on", "Ran over a tire"], ans: 0 },
+                { q: "19. 'weave through traffic': What does this driver do?", options: ["Maintain a safe distance", "Continually move in and out between lanes unpredictably", "Stop at every red light", "Honk politely"], ans: 1 },
+                { q: "20. 'a dead giveaway': What does this phrase refer to?", options: ["A free promotional gift", "A dangerous road curve", "A broken traffic light", "Something that completely reveals the truth"], ans: 3 },
+
+                // Context
+                { q: "21. Habits are activities that you (often / hardly ever) do.", options: ["hardly ever", "often", "rarely", "never"], ans: 1 },
+                { q: "22. If a driver cuts you off, they turn in front of you (dangerously close / with plenty of room).", options: ["dangerously close", "with plenty of room", "politely and slowly", "at a red light"], ans: 0 },
+                { q: "23. When you are on a diet, you are trying to (lose weight / gain weight).", options: ["gain weight excessively", "lose weight or stay healthy", "build muscle only", "eat more refined sugar"], ans: 1 },
+                { q: "24. If someone gossips about coworkers, they discuss (personal affairs / car engines).", options: ["car engines", "traffic laws", "personal affairs", "grocery sales"], ans: 2 },
+                { q: "25. If a meal tastes spicy, it likely contains (chili peppers / honey).", options: ["honey and sugar", "milk and butter", "chili peppers", "bread crumbs"], ans: 2 },
+                { q: "26. A pileup is an accident involving (multiple vehicles / one bicycle).", options: ["only one bicycle", "multiple vehicles hitting each other", "a parked motorcycle", "a single pedestrian"], ans: 1 },
+                { q: "27. Standing up for yourself means you (defend yourself / agree quietly).", options: ["defend yourself", "agree quietly with everyone", "run away from problems", "apologize unnecessarily"], ans: 0 },
+                { q: "28. Refined grains have (fewer nutrients / more vitamins) than whole grains.", options: ["more vitamins", "fewer nutrients", "identical nutrients", "higher protein content"], ans: 1 },
+                { q: "29. If a person says 'it's no big deal', the issue is (unimportant / critical).", options: ["critical", "extremely urgent", "unimportant", "unforgivable"], ans: 2 },
+                { q: "30. A compact car is (smaller / much larger) than a full-size SUV.", options: ["much larger", "smaller", "the same size", "taller"], ans: 1 },
+
+                // Phrasal Verbs & Driving Terms
+                { q: "31. Please ______ this registration form before entering.", options: ["fill up", "pick out", "drop off", "fill out"], ans: 3 },
+                { q: "32. Can you ______ some fresh milk on your way home?", options: ["pick up", "fill up", "drop off", "pick out"], ans: 0 },
+                { q: "33. We should ______ the gas tank before taking the highway.", options: ["fill out", "fill up", "drop off", "pick up"], ans: 1 },
+                { q: "34. Please ______ the kids at school by 7:30 AM.", options: ["pick out", "fill out", "drop off", "fill up"], ans: 2 },
+                { q: "35. She went to the store to ______ a gorgeous dress.", options: ["pick out", "drop off", "fill up", "fill out"], ans: 0 },
+                { q: "36. Safe drivers always ______ the posted speed limit.", options: ["weave", "observe", "tailgate", "honk"], ans: 1 },
+                { q: "37. You must turn on your ______ light before making a turn.", options: ["engine", "battery", "signal", "horn"], ans: 2 },
+                { q: "38. Angry commuters frequently ______ their horns during traffic jams.", options: ["stare", "fill", "drop", "honk"], ans: 3 },
+                { q: "39. Never ______ while driving; taking eyes off the road causes accidents.", options: ["text", "observe", "maintain", "signal"], ans: 0 },
+                { q: "40. Always maintain a safe ______ behind the vehicle ahead.", options: ["speed limit", "distance", "fender bender", "battery"], ans: 1 }
+            ],
+
+            stage2: [
+                // Present Perfect Continuous
+                { q: "41. She ______ (work) at our company since 2012.", options: ["have been working", "is working", "has been working", "worked"], ans: 2 },
+                { q: "42. They ______ (study) for the midterm for three hours.", options: ["has been studying", "have been studying", "studied", "are studying"], ans: 1 },
+                { q: "43. He ______ (drive) that old compact car for five years.", options: ["has been driving", "have been driving", "is driving", "drove"], ans: 0 },
+                { q: "44. We ______ (wait) for the bus since 8:00 AM.", options: ["has been waiting", "waited", "are waiting", "have been waiting"], ans: 3 },
+                { q: "45. How long ______ you ______ (try) to cut down on carbohydrates?", options: ["has ... been trying", "have ... been trying", "did ... try", "are ... trying"], ans: 1 },
+                { q: "46. My brother ______ (not / feel) well since yesterday morning.", options: ["have not been feeling", "has not been feeling", "is not feeling", "did not feel"], ans: 1 },
+                { q: "47. The driver behind us ______ (honk) his horn for ten minutes!", options: ["have been honking", "honked", "has been honking", "is honking"], ans: 2 },
+                { q: "48. I ______ (look) for an electric car since last month.", options: ["have been looking", "has been looking", "looked", "am looking"], ans: 0 },
+                { q: "49. ______ she ______ (avoid) dairy products for a long time?", options: ["Have ... been avoiding", "Has ... been avoiding", "Is ... avoiding", "Did ... avoid"], ans: 1 },
+                { q: "50. The mechanic ______ (fix) the car motor for two hours.", options: ["have been fixing", "fixed", "is fixing", "has been fixing"], ans: 3 },
+
+                // Simple Past vs Past Continuous
+                { q: "51. The electricity went out while I ______ (type) my report.", options: ["typed", "was typing", "have typed", "were typing"], ans: 1 },
+                { q: "52. While he ______ (drive) to work, another car sideswiped him.", options: ["drove", "is driving", "was driving", "has driven"], ans: 2 },
+                { q: "53. I ______ (see) a major collision while I was walking home.", options: ["saw", "was seeing", "have seen", "see"], ans: 0 },
+                { q: "54. They were talking on the phone when the accident ______ (happen).", options: ["was happening", "happened", "happens", "has happened"], ans: 1 },
+                { q: "55. She dropped her phone while she ______ (text) and driving.", options: ["texted", "is texting", "has texted", "was texting"], ans: 3 },
+                { q: "56. As the driver was weaving through traffic, a police officer ______ (stop) him.", options: ["was stopping", "stopped", "stops", "has stopped"], ans: 1 },
+                { q: "57. I smelled smoke while I ______ (cook) dinner in the kitchen.", options: ["was cooking", "cooked", "have cooked", "am cooking"], ans: 0 },
+                { q: "58. When the traffic light turned red, he ______ (not / pay) attention.", options: ["did not pay", "was not paying", "has not paid", "is not paying"], ans: 1 },
+                { q: "59. What were you doing when the car ______ (hit) the tree?", options: ["was hitting", "hits", "hit", "has hit"], ans: 2 },
+                { q: "60. While we were waiting at the drive-thru, the truck behind us ______ (honk) loudly.", options: ["was honking", "honks", "has honked", "honked"], ans: 3 },
+
+                // Unreal Conditional (Mixed Options)
+                { q: "61. If we ______ (have) a car, we would not get wet in the rain.", options: ["have", "had", "would have", "has"], ans: 1 },
+                { q: "62. If I ______ (be) you, I would not buy that expensive sports car.", options: ["were", "am", "would be", "was"], ans: 0 },
+                { q: "63. She would feel much healthier if she ______ (cut down) on sugar.", options: ["cuts down", "would cut down", "cut down", "has cut down"], ans: 2 },
+                { q: "64. If drivers observed the speed limit, there ______ (be) fewer accidents.", options: ["will be", "are", "were", "would be"], ans: 3 },
+                { q: "65. If he did not tailgate, he ______ (not / rear-end) the vehicle ahead.", options: ["would not rear-end", "will not rear-end", "does not rear-end", "did not rear-end"], ans: 0 },
+                { q: "66. What would you do if someone ______ (cut) you off on the road?", options: ["cuts", "cut", "would cut", "will cut"], ans: 1 },
+                { q: "67. If they had more free time, they ______ (cook) healthy meals at home.", options: ["will cook", "cooked", "would cook", "cook"], ans: 2 },
+                { q: "68. I would buy an electric car if it ______ (cost) less money.", options: ["cost", "costs", "would cost", "will cost"], ans: 0 },
+                { q: "69. If she were not allergic to seafood, she ______ (eat) the grilled shrimp.", options: ["will eat", "eats", "would eat", "ate"], ans: 2 },
+                { q: "70. If people paid full attention while driving, roads ______ (be) much safer.", options: ["will be", "would be", "are", "were"], ans: 1 }
+            ],
+
+            stage3: [
+                // Listening True/False Clips
+                { q: "71. [Listening Clip 1] The speaker had a minor fender bender in the parking lot.", options: ["True", "False"], ans: 0, audio: "I had a small fender bender yesterday morning in the parking lot. Luckily no one was hurt!" },
+                { q: "72. [Listening Clip 2] The driver in front was talking on the phone.", options: ["True", "False"], ans: 1, audio: "The driver in front of me was texting on his phone, not talking, which caused him to slow down." },
+                { q: "73. [Listening Clip 3] Sothea cut down on starchy vegetables to manage weight.", options: ["True", "False"], ans: 0, audio: "Sothea decided to cut down on starchy vegetables like potatoes and corn." },
+                { q: "74. [Listening Clip 4] Refined grains contain more fiber than whole grains.", options: ["True", "False"], ans: 1, audio: "Whole grains contain much more fiber and natural vitamins compared to processed refined grains." },
+                { q: "75. [Listening Clip 5] The driver was pulled over for speeding and tailgating.", options: ["True", "False"], ans: 0, audio: "The police officer pulled over the red sports car because the driver was speeding and tailgating." },
+                { q: "76. [Listening Clip 6] The passenger asked the driver to ignore the speed limit.", options: ["True", "False"], ans: 1, audio: "My passenger reminded me to observe the speed limit and maintain a safe distance." },
+                { q: "77. [Listening Clip 7] She declined pork because it is against her religion.", options: ["True", "False"], ans: 0, audio: "She politely declined the pork dish, explaining that it is against her religious beliefs." },
+                { q: "78. [Listening Clip 8] Full-size sedans have less space than compact cars.", options: ["True", "False"], ans: 1, audio: "Full-size sedans offer significantly more passenger room and trunk space than compact cars." },
+                { q: "79. [Listening Clip 9] The driver stopped cold after realizing he was going the wrong way.", options: ["True", "False"], ans: 0, audio: "When he realized he was going the wrong way down a one-way street, he stopped cold immediately." },
+                { q: "80. [Listening Clip 10] The minivan signalled properly before making a left turn.", options: ["True", "False"], ans: 1, audio: "The minivan turned left without using a signal light, nearly causing a collision." },
+
+                // Reading Comprehension Questions (BALANCED ANSWERS: B, C, D, A)
+                { q: "81. [Reading] What is the primary focus of the reading passage?", options: ["How to buy a luxury convertible", "Daily choices regarding nutrition and road safety", "How to fix a car engine", "Fast food restaurant reviews"], ans: 1 },
+                { q: "82. [Reading] Whole grains differ from refined grains because whole grains ______.", options: ["have zero calories", "taste sour", "retain essential nutrients and fiber", "are categorized as poultry"], ans: 2 },
+                { q: "83. [Reading] Why do many individuals adopt specific diets?", options: ["To learn how to weave through traffic", "To buy compact cars", "To gossip about coworkers", "To maintain health or avoid disease"], ans: 3 },
+                { q: "84. [Reading] Which phrase is cited as a polite way to decline unwanted food?", options: ["'It doesn't agree with me.'", "'Don't ask...'", "'Why so glum?'", "'Cut it out!'"], ans: 0 },
+                { q: "85. [Reading] Which driving habit significantly increases crash risks?", options: ["Observing speed limits", "Texting while driving and tailgating", "Signalling when turning", "Maintaining safe distance"], ans: 1 },
+                { q: "86. [Reading] Potatoes are categorized as what type of vegetable?", options: ["Green vegetable", "Poultry product", "Starchy vegetable", "Refined grain"], ans: 2 },
+                { q: "87. [Reading] What does 'tailgating' mean according to safety guides?", options: ["Parking in a garage", "Cleaning the car motor", "Driving an electric sedan", "Driving too closely behind another car"], ans: 3 },
+                { q: "88. [Reading] What is achieved when drivers observe speed limits and signal properly?", options: ["Roads become safer for all commuters", "More pileups occur", "Fuel runs out quickly", "More fender benders happen"], ans: 0 },
+                { q: "89. [Reading] A head-on crash is an example of a ______.", options: ["food allergy", "serious collision", "polite phrase", "phrasal verb"], ans: 1 },
+                { q: "90. [Reading] Why do people use polite declining strategies at meals?", options: ["To get discounts on groceries", "To show off new clothes", "To manage social situations smoothly", "To complain about weather"], ans: 2 },
+
+                // Reading T/F
+                { q: "91. [Reading T/F] Refined grains lose natural fiber during industrial processing.", options: ["True", "False"], ans: 0 },
+                { q: "92. [Reading T/F] Tailgating and weaving through traffic are safe driving practices.", options: ["True", "False"], ans: 1 },
+                { q: "93. [Reading T/F] 'It doesn't agree with me' is a polite way to refuse food.", options: ["True", "False"], ans: 0 },
+                { q: "94. [Reading T/F] Green vegetables and starchy vegetables belong to identical categories.", options: ["True", "False"], ans: 1 },
+                { q: "95. [Reading T/F] Paying full attention behind the wheel helps prevent collisions.", options: ["True", "False"], ans: 0 },
+
+                // Writing Prompt Multi-Choice Checks (BALANCED ANSWERS: C, A, B, D, A)
+                { q: "96. Which sentence uses correct unreal conditional grammar for writing?", options: ["If I have enough money, I will bought an electric sedan.", "If I would have money, I buy sedan.", "If I had enough money, I would buy an electric sedan.", "If I had money, I buy electric car."], ans: 2 },
+                { q: "97. Which sentence correctly expresses cutting down on food?", options: ["I am trying to cut down on starchy foods to stay fit.", "I am trying to cut up on starchy foods.", "I am cut down food to stay fit.", "I trying cut down food."], ans: 0 },
+                { q: "98. Which sentence correctly describes safe driving practices?", options: ["Drivers should tailgate and weave through traffic.", "Drivers should observe the speed limit and maintain a safe distance.", "Drivers should text while driving.", "Drivers should honk excessively."], ans: 1 },
+                { q: "99. Which phrasal verb correctly completes: 'I need to ______ my gas tank'?", options: ["pick out", "drop off", "fill out", "fill up"], ans: 3 },
+                { q: "100. Which word best describes a minor car accident?", options: ["fender bender", "head-on collision", "pileup", "sideswiped"], ans: 0 }
+            ]
+        };
+
+        // APPLICATION STATE
+        let studentInfo = { name: "", id: "" };
+        let scores = { stage1: 0, stage2: 0, stage3: 0 };
+        let stageCompleted = { stage1: false, stage2: false, stage3: false };
+        
+        let currentStage = 1;
+        let currentQuestionIdx = 0;
+
+        // AUDIO SYNTHESIS SIMULATOR
+        function playSpeech(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Audio clip: " + text);
+            }
+        }
+
+        // LAUNCH HUB
+        function launchHub() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            const idInput = document.getElementById('student-id').value.trim();
+
+            if (!nameInput || !idInput) {
+                alert("Please enter your name and student ID to begin!");
+                return;
+            }
+
+            studentInfo.name = nameInput;
+            studentInfo.id = idInput;
+
+            document.getElementById('display-student-name').innerText = studentInfo.name;
+            document.getElementById('display-student-id').innerText = "ID: " + studentInfo.id;
+
+            switchScreen('hub-screen');
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // START STAGE
+        function startStage(stageNum) {
+            currentStage = stageNum;
+            currentQuestionIdx = 0;
+            switchScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const stageData = quizData['stage' + currentStage];
+            const q = stageData[currentQuestionIdx];
+
+            document.getElementById('stage-indicator').innerText = `Stage ${currentStage}`;
+            document.getElementById('question-number').innerText = `Q${currentQuestionIdx + 1} / ${stageData.length}`;
+            
+            // Progress Bar
+            const progPercent = ((currentQuestionIdx) / stageData.length) * 100;
+            document.getElementById('quiz-progress').style.width = `${progPercent}%`;
+
+            // Toggle Reading Passage Display for Reading Questions (Stage 3, Q81-Q95)
+            const readingPassageContainer = document.getElementById('reading-passage-container');
+            if (currentStage === 3 && currentQuestionIdx >= 10 && currentQuestionIdx <= 24) {
+                readingPassageContainer.style.display = 'block';
+            } else {
+                readingPassageContainer.style.display = 'none';
+            }
+
+            // Question Text
+            document.getElementById('question-text').innerText = q.q;
+
+            // Audio Box
+            const audioBox = document.getElementById('audio-container');
+            if (q.audio) {
+                audioBox.style.display = 'flex';
+                document.getElementById('play-audio-btn').onclick = () => playSpeech(q.audio);
+            } else {
+                audioBox.style.display = 'none';
+            }
+
+            // Options with A/B/C/D prefixes
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            document.getElementById('next-q-btn').style.display = 'none';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                const prefixLabel = prefixes[idx] ? `<strong>${prefixes[idx]}.</strong> ` : '';
+                btn.innerHTML = `<span>${prefixLabel}${opt}</span><span class="badge"></span>`;
+                btn.onclick = () => selectAnswer(idx, q.ans);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedIdx, correctIdx) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.style.pointerEvents = 'none');
+
+            if (selectedIdx === correctIdx) {
+                buttons[selectedIdx].classList.add('correct');
+                scores['stage' + currentStage]++;
+            } else {
+                buttons[selectedIdx].classList.add('incorrect');
+                buttons[correctIdx].classList.add('correct');
+            }
+
+            document.getElementById('next-q-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            const stageData = quizData['stage' + currentStage];
+            currentQuestionIdx++;
+
+            if (currentQuestionIdx < stageData.length) {
+                loadQuestion();
+            } else {
+                // Stage Complete
+                stageCompleted['stage' + currentStage] = true;
+                updateHubUI();
+                switchScreen('hub-screen');
+            }
+        }
+
+        function returnToHub() {
+            switchScreen('hub-screen');
+            updateHubUI();
+        }
+
+        function updateHubUI() {
+            // Update total score
+            const totalScore = scores.stage1 + scores.stage2 + scores.stage3;
+            document.getElementById('total-score-badge').innerText = `${totalScore} / 100`;
+
+            // Stage 1
+            if (stageCompleted.stage1) {
+                document.getElementById('stage-card-1').classList.add('completed');
+                document.getElementById('stage-1-score').innerText = `${scores.stage1} / 40 Score`;
+                
+                // Unlock Stage 2
+                const s2Btn = document.getElementById('stage-2-btn');
+                s2Btn.disabled = false;
+                s2Btn.style.opacity = '1';
+                s2Btn.innerText = 'Start Stage 2';
+                document.getElementById('stage-card-2').classList.add('unlocked');
+            }
+
+            // Stage 2
+            if (stageCompleted.stage2) {
+                document.getElementById('stage-card-2').classList.add('completed');
+                document.getElementById('stage-2-score').innerText = `${scores.stage2} / 30 Score`;
+
+                // Unlock Stage 3
+                const s3Btn = document.getElementById('stage-3-btn');
+                s3Btn.disabled = false;
+                s3Btn.style.opacity = '1';
+                s3Btn.innerText = 'Start Stage 3';
+                document.getElementById('stage-card-3').classList.add('unlocked');
+            }
+
+            // Stage 3
+            if (stageCompleted.stage3) {
+                document.getElementById('stage-card-3').classList.add('completed');
+                document.getElementById('stage-3-score').innerText = `${scores.stage3} / 30 Score`;
+
+                document.getElementById('final-results-btn').style.display = 'inline-block';
+            }
+        }
+
+        // CREATIVE DYNAMIC RESULTS EVALUATION
+        function showFinalResults() {
+            const totalScore = scores.stage1 + scores.stage2 + scores.stage3;
+            document.getElementById('final-score-val').innerText = totalScore;
+
+            document.getElementById('cert-name').innerText = studentInfo.name;
+            document.getElementById('cert-id').innerText = studentInfo.id;
+
+            const emojiEl = document.getElementById('result-emoji');
+            const titleEl = document.getElementById('result-title');
+            const subEl = document.getElementById('result-subtitle');
+
+            emojiEl.className = 'animated-emoji'; // reset animation
+
+            if (totalScore >= 90) {
+                emojiEl.innerText = '👑';
+                emojiEl.classList.add('anim-bounce');
+                titleEl.innerText = 'Outstanding Mastery!';
+                subEl.innerText = 'Praiseworthy performance! You are completely ready for your Connectivity 2B midterm exam!';
+                triggerConfetti();
+            } else if (totalScore >= 75) {
+                emojiEl.innerText = '🎉';
+                emojiEl.classList.add('anim-pulse');
+                titleEl.innerText = 'Great Job!';
+                subEl.innerText = 'Wonderful effort! You have a solid understanding of the midterm units.';
+                triggerConfetti();
+            } else if (totalScore >= 50) {
+                emojiEl.innerText = '👏';
+                emojiEl.classList.add('anim-wiggle');
+                titleEl.innerText = 'Good Effort!';
+                subEl.innerText = 'Passed! Review the grammar rules and vocabulary lists to boost your grade even higher.';
+            } else {
+                emojiEl.innerText = '💪';
+                emojiEl.classList.add('anim-wiggle');
+                titleEl.innerText = 'Keep Practicing!';
+                subEl.innerText = 'Don\'t give up! Review Units 6 to 8.2 and try the practice exam again.';
+            }
+
+            switchScreen('results-screen');
+        }
+
+        function restartQuiz() {
+            scores = { stage1: 0, stage2: 0, stage3: 0 };
+            stageCompleted = { stage1: false, stage2: false, stage3: false };
+            
+            // Reset Hub Buttons
+            document.getElementById('stage-card-1').classList.remove('completed');
+            document.getElementById('stage-1-score').innerText = '40 Questions';
+
+            document.getElementById('stage-card-2').classList.remove('completed', 'unlocked');
+            document.getElementById('stage-2-score').innerText = '30 Questions';
+            const s2Btn = document.getElementById('stage-2-btn');
+            s2Btn.disabled = true;
+            s2Btn.style.opacity = '0.5';
+            s2Btn.innerText = 'Locked 🔒';
+
+            document.getElementById('stage-card-3').classList.remove('completed', 'unlocked');
+            document.getElementById('stage-3-score').innerText = '30 Questions';
+            const s3Btn = document.getElementById('stage-3-btn');
+            s3Btn.disabled = true;
+            s3Btn.style.opacity = '0.5';
+            s3Btn.innerText = 'Locked 🔒';
+
+            document.getElementById('final-results-btn').style.display = 'none';
+            document.getElementById('total-score-badge').innerText = '0 / 100';
+
+            switchScreen('hub-screen');
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
